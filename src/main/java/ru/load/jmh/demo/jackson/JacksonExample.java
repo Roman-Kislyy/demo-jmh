@@ -15,8 +15,7 @@ public class JacksonExample {
     public User getUser() {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            //user = mapper.readValue(new File(this.getClass().getClassLoader().getResource("ru/load/jmh/demo/jackson/User.json").getFile()), User.class);
-            user = mapper.readValue(new File("you-path\\src\\main\\resources\\ru/load/jmh/demo/jackson/User.json"), User.class);
+            user = mapper.readValue(new File("src/main/resources/ru/load/jmh/demo/jackson/User.json"), User.class);
         } catch (JsonGenerationException e) {
             e.printStackTrace();
         } catch (JsonMappingException e) {
@@ -36,8 +35,7 @@ public class JacksonExample {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            //user = mapper.readValue(new File(this.getClass().getClassLoader().getResource("ru/load/jmh/demo/jackson/User.json").getFile()), User.class);
-            user = mapper.readValue(new File("you-path\\src\\main\\resources\\ru/load/jmh/demo/jackson/User.json"), User.class);
+            user = mapper.readValue(new File("src/main/resources/ru/load/jmh/demo/jackson/User.json"), User.class);
         } catch (JsonGenerationException e) {
             e.printStackTrace();
         } catch (JsonMappingException e) {
