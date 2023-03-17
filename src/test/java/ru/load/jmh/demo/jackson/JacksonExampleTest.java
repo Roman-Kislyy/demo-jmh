@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Warmup(iterations = 1, time = 5, timeUnit = TimeUnit.SECONDS)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@BenchmarkMode({Mode.Throughput,Mode.AverageTime})
-@Measurement(iterations = 1,  time = 10, timeUnit = TimeUnit.SECONDS)
+@BenchmarkMode({Mode.Throughput})
+@Measurement(iterations = 5,  time = 10, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 @State(Scope.Thread)
 public class JacksonExampleTest  {
@@ -30,6 +30,7 @@ public class JacksonExampleTest  {
 	@DisplayName("Should be Baeldung")
 	@Test
 	@Benchmark
+	@Threads(3)
  	public User getUserTest() {
 		User result = jacksonExample.getUser();
 		assertEquals("Baeldung", result.getName());
