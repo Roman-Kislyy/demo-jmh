@@ -45,26 +45,26 @@ public class DeadLockExample {
 
     public String putToV2GetFromV1(Integer number) {
         /*
-         * Вызывает deadlock. Код вызывает блокировку lock в обратной последовательности, в сравнение с putToV1GetFromV2
+         * Не вызывает deadlock. Код вызывает блокировку lock в такой же последовательности, как и putToV1GetFromV2
          */
         String v1Tmp = null;
         try {
-            if (lock2.tryLock(2, TimeUnit.SECONDS)){
-                System.out.println("Thread 2: locked lock2");
-                value2 = String.valueOf(number);
-                System.out.println("Thread 2: write value2 " + value2);
-                if (lock1.tryLock(2, TimeUnit.SECONDS)){
-                    System.out.println("Thread 2: locked lock1");
-                    v1Tmp = value1;
-                    System.out.println("Thread 2: read from value1 " + v1Tmp);
-                    lock1.unlock();
+            if (lock1.tryLock(2, TimeUnit.SECONDS)){
+                System.out.println("Thread 2: locked lock1");
+                v1Tmp = value1;
+                System.out.println("Thread 2: read from value1 " + v1Tmp);
+                if (lock2.tryLock(2, TimeUnit.SECONDS)){
+                    System.out.println("Thread 2: locked lock2");
+                    value2 = String.valueOf(number);
+                    System.out.println("Thread 2: write value2 " + value2);
+                    lock2.unlock();
                 }
-                lock2.unlock();
+                lock1.unlock();
                 return v1Tmp;
             }
         } catch (InterruptedException e) {
-            lock1.unlock();
             lock2.unlock();
+            lock1.unlock();
             System.out.println(e);
         }
         return null;
