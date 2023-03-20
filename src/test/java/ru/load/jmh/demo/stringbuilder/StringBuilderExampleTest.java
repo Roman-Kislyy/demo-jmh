@@ -34,16 +34,21 @@ public class StringBuilderExampleTest {
      */
     private StringBuilderExample sbe = new StringBuilderExample();
 
-    @Benchmark
+//    @Benchmark
     @Test
     public void stringAppendLoop() {
         sbe.stringAppendLoop();
     }
 
-    @Benchmark
+//    @Benchmark
     @Test
     public void stringAppendBuilderLoop() {
         sbe.stringAppendBuilderLoop();
     }
-
+    @Benchmark
+    @Test
+    public void stringAppendLoopBenchmark() {
+        //Вызов метода с медленной склейкой
+        sbe.stringAppendLoop();
+    }
 }
