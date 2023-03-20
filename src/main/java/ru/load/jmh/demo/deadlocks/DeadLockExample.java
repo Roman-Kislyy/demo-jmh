@@ -1,50 +1,72 @@
 package ru.load.jmh.demo.deadlocks;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class DeadLockExample {
     /*
-        Этот код создает два потока, каждый из которых блокирует два ресурса: Lock и BlockingQueue.
-        Поток 1 блокирует lock1, затем добавляет элемент в queue1, затем блокирует lock2 и
-        добавляет элемент в queue2. Поток 2 делает то же самое в обратном порядке.
-
-        Когда оба потока запущены, они будут заблокированы в ожидании друг друга, и программа зависнет.
-        Чтобы избежать deadlock, необходимо убедиться, что потоки блокируют ресурсы в одном и том же
-        порядке. Если два потока блокируют одни и те же ресурсы в разном порядке, это может привести к
-        deadlock.
+     *  Этот код создает два потока, каждый из которых блокирует два ресурса lock1 и lock2.
+     *  Поток 1 блокирует lock1, затем присваивает value1 значение 1, затем блокирует lock2 и
+     *  читает значение из value2. Поток 2 делает то же самое в обратном порядке.
+     *
+     *  Когда оба потока запущены, они будут заблокированы в ожидании друг друга, и программа зависнет.
+     *  Чтобы избежать deadlock, необходимо убедиться, что потоки блокируют ресурсы в одном и том же
+     *  порядке. Если два потока блокируют одни и те же ресурсы в разном порядке, это может привести к
+     *  deadlock.
      */
     final Lock lock1 = new ReentrantLock();
     final Lock lock2 = new ReentrantLock();
-    final BlockingQueue<Integer> queue1 = new LinkedBlockingQueue<>();
-    final BlockingQueue<Integer> queue2 = new LinkedBlockingQueue<>();
-    public void putToQ1(Integer q1) {
+    String value1 = new String("1");
+    String value2 = new String("2");
+    public String putToV1GetFromV2(Integer number) {
+        String v2Tmp = null;
         try {
-            lock1.lock();
-            System.out.println("Thread 1: locked lock1");
-            queue1.put(1);
-            System.out.println("Thread 1: added to queue1");
-            lock2.lock();
-            System.out.println("Thread 1: locked lock2");
-            queue2.put(2);
-            System.out.println("Thread 1: added to queue2");
+            if (lock1.tryLock(2, TimeUnit.SECONDS)){
+                System.out.println("Thread 1: locked lock1");
+                value1 = String.valueOf(number);
+                System.out.println("Thread 1: write value1 " + value1);
+                if (lock2.tryLock(2, TimeUnit.SECONDS)){
+                    System.out.println("Thread 1: locked lock2");
+                    v2Tmp = value2;
+                    System.out.println("Thread 1: read from value2 " +  v2Tmp);
+                    lock2.unlock();
+                }
+                lock1.unlock();
+                return v2Tmp;
+            }
+        } catch (InterruptedException e) {
             lock2.unlock();
             lock1.unlock();
-        } catch (InterruptedException e) {}
+            System.out.println(e);
+        }
+        return null;
     }
-    public void putToQ2(Integer q2) {
+
+    public String putToV2GetFromV1(Integer number) {
+        /*
+         * Вызывает deadlock. Код вызывает блокировку lock в обратной последовательности, в сравнение с putToV1GetFromV2
+         */
+        String v1Tmp = null;
         try {
-            lock2.lock();
-            System.out.println("Thread 2: locked lock2");
-            queue2.put(3);
-            System.out.println("Thread 2: added to queue2");
-            lock1.lock();
-            System.out.println("Thread 2: locked lock1");
-            queue1.put(4);
-            System.out.println("Thread 2: added to queue1");
+            if (lock2.tryLock(2, TimeUnit.SECONDS)){
+                System.out.println("Thread 2: locked lock2");
+                value2 = String.valueOf(number);
+                System.out.println("Thread 2: write value2 " + value2);
+                if (lock1.tryLock(2, TimeUnit.SECONDS)){
+                    System.out.println("Thread 2: locked lock1");
+                    v1Tmp = value1;
+                    System.out.println("Thread 2: read from value1 " + v1Tmp);
+                    lock1.unlock();
+                }
+                lock2.unlock();
+                return v1Tmp;
+            }
+        } catch (InterruptedException e) {
             lock1.unlock();
             lock2.unlock();
-        } catch (InterruptedException e) {}
+            System.out.println(e);
+        }
+        return null;
     }
 }

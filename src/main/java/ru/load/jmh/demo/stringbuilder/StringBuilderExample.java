@@ -25,7 +25,6 @@ public class StringBuilderExample {
             if (s.length() > 0) s += ", ";
             s += "bar";
         }
-
         return s;
     }
 
@@ -37,7 +36,6 @@ public class StringBuilderExample {
             if (sb.length() > 0) sb.append(", ");
             sb.append("bar");
         }
-
         return sb.toString();
     }
 }

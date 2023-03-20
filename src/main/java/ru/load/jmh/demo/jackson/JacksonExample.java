@@ -30,10 +30,8 @@ public class JacksonExample {
 
         if (user != null) {
             return user;
-            //System.out.println("From cache!");
         }
         ObjectMapper mapper = new ObjectMapper();
-
         try {
             user = mapper.readValue(new File("D:\\load\\demo-jmh\\src/main/resources/ru/load/jmh/demo/jackson/User.json"), User.class);
         } catch (JsonGenerationException e) {

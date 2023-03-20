@@ -2,15 +2,12 @@ package ru.load.jmh.demo.stringbuilder;
 
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.*;
-
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.*;
 @Warmup(iterations = 3, time = 5, timeUnit = TimeUnit.SECONDS)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Timeout(time = 5, timeUnit = TimeUnit.SECONDS)
 @BenchmarkMode({Mode.SampleTime})
-@Measurement(iterations = 5,  time = 5, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 3,  time = 5, timeUnit = TimeUnit.SECONDS)
 @Fork(1)
 @State(Scope.Thread)
 public class StringBuilderExampleTest {
